@@ -1,0 +1,5 @@
+{
+    "SITE": "PUT YOUR CHARGEBEE SITE HERE",
+    "SITE_API_KEY": "PUT YOUR CHARGEBEE SITE API KEY HERE",
+    "DB_CONNECTION_STRING": "postgres://user:password@hostname:port/dbname"
+}
