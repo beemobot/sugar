@@ -1,0 +1,29 @@
+{
+  "name": "violet",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:AyuAi/violet.git",
+  "author": "Ayu <ayu@ayu.dev>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@types/chai": "^4.2.22",
+    "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^9.1.3",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4"
+  },
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "start:dev": "ts-node-dev --watch src/**/*.{ts,js} src/index.ts",
+    "build": "yarn tsc",
+    "newstart": "yarn build && yarn start",
+    "test": "mocha --require ts-node/register --timeout 10000 test/**/*.spec.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.7",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-prefer-arrow": "^1.2.3"
+  }
+}
