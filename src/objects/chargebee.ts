@@ -1,5 +1,5 @@
 import { ChargeBee } from "chargebee-typescript";
-import { SITE, SITE_API_KEY } from "./config.json";
+import { SITE, SITE_API_KEY } from "../config.json";
 
 // Initialize Chargebee object
 const chargebee = new ChargeBee();
