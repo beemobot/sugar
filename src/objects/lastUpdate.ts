@@ -1,15 +1,15 @@
-import fs from 'fs';
-import dayjs, { Dayjs } from 'dayjs';
+import fs from "fs";
+import dayjs, { Dayjs } from "dayjs";
 
 class LastUpdate {
 
-    private readonly lastUpdateFile = "lastUpdate.json";
+    private readonly lastUpdateFile = "./src/lastUpdate.json";
     private lastUpdate: number = -1;
 
-    constructor() {
+    public constructor() {
         fs.readFile(this.lastUpdateFile, (err, data) => {
             if (err) {
-                throw err;
+                return;
             }
             const arg = data;
             this.processData(arg);
@@ -27,7 +27,7 @@ class LastUpdate {
         const json: any = {
             lastUpdated: this.lastUpdate,
         };
-        fs.writeFile(this.lastUpdateFile, json, 'utf8', (err: any) => {
+        fs.writeFile(this.lastUpdateFile, JSON.stringify(json), "utf8", (err: any) => {
             if (err) {
                 throw err;
             }
@@ -35,7 +35,7 @@ class LastUpdate {
     }
 
     public get(): Dayjs | undefined {
-        return this.lastUpdate > 0 
+        return this.lastUpdate > 0
             ? dayjs(this.lastUpdate)
             : undefined;
     }
