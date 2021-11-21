@@ -1,1 +1,1 @@
-Violet is a Typescript revenue API for Tea, the Discord bot (https://ayu.ai/tea)
+Violet is a Chargebee subscriptions handler for Tea, the Discord bot (https://ayu.ai/tea) using webhooks and PostgreSQL
