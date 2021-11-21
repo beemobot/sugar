@@ -2,7 +2,7 @@ import express from "express";
 import lastUpdate from "../objects/lastUpdate";
 
 const app = express();
-const port = 3000;
+const port = 3030;
 
 app.post("/hook", (req, res, next) => {
     setTimeout(() => {
