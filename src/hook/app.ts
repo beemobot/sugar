@@ -94,6 +94,7 @@ const port = 3030;
 // }
 
 app.use(helmet());
+app.use(express.json());
 app.post("/hook", (req, res, next) => {
     processHook(req, res, next).then(() => {
         lastUpdate.update();
