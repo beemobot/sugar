@@ -10,6 +10,8 @@ const port = 3030;
 
 app.use(helmet());
 app.use(express.json());
+app.set("trust proxy", true);
+
 app.post("/hook", (req, res, next) => {
     authenticateRequest(req)
         .then(__ => {
