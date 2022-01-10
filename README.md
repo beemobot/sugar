@@ -1,1 +1,1 @@
-Violet is a Chargebee subscriptions handler for Tea, the Discord bot (https://ayu.ai/tea) using webhooks and PostgreSQL
+sugar is a Chargebee subscriptions handler for tea, the Discord bot (https://ayu.ai/tea) using a webhook and PostgreSQL
