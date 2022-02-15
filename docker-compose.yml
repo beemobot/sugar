@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  sugar:
+    image: sugar
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3030:3030

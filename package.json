@@ -1,7 +1,7 @@
 {
   "name": "sugar",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "main": "dist/app.js",
   "repository": "git@github.com:AyuAi/sugar.git",
   "author": "Ayu <ayu@ayu.dev>",
   "license": "MIT",
@@ -27,8 +27,8 @@
   "scripts": {
     "clean": "rm -rf ./dist",
     "lint": "yarn eslint './src/**/*.ts' --fix",
-    "start": "ts-node src/index.ts",
-    "start:dev": "ts-node-dev --watch src/**/*.{ts,js} src/index.ts",
+    "start": "yarn build && node dist/app.js",
+    "start:dev": "ts-node-dev --watch src/**/*.{ts,js} src/app.ts",
     "build": "yarn tsc",
     "newstart": "yarn build && yarn start",
     "test": "mocha --require ts-node/register --timeout 10000 test/**/*.spec.ts"
