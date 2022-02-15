@@ -1,10 +1,11 @@
 import { Event } from "chargebee-typescript/lib/resources";
 import { RequestHandler } from "express";
 
-const allowed_events = [
+const allowed_events: Event['event_type'][] = [
   "subscription_activated",
   "subscription_started",
-  "subscription_activated",
+  "subscription_paused",
+  "subscription_cancelled",
 ];
 
 export const hookController: RequestHandler<{}, {}, Event> = async (
