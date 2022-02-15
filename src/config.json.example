@@ -6,5 +6,5 @@
     "BASIC_AUTH_PASSWORD": "PASSWORD FOR CHARGEBEE WEBHOOK",
     "DB_CONNECTION_STRING": "postgres://user:password@hostname:port/dbname",
     "HOOK_PORT": "3030",
-    "ALLOWED_ORIGIN": "List of allowed hostnames separated by commands"
+    "ALLOWED_ORIGIN": "List of allowed hostnames separated by commas"
 }
