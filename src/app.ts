@@ -5,7 +5,7 @@ import { HOOK_PORT } from "./config.json";
 import hookRoute from "./hook/route";
 import notFoundHandler from "./middlewares/notFoundHandler";
 
-var app = new Koa();
+const app = new Koa();
 const port = HOOK_PORT;
 
 app.use(helmet());
