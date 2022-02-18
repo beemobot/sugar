@@ -1,22 +1,19 @@
-import express from "express";
-import helmet from "helmet";
+import Koa from "koa";
+import helmet from "koa-helmet";
+import bodyParser from "koa-bodyparser";
 import { HOOK_PORT } from "./config.json";
-import hookRoutes from "./hook/routes";
-import errorHandler from "./middlewares/errorHandler";
+import hookRoute from "./hook/route";
 import notFoundHandler from "./middlewares/notFoundHandler";
 
-const app = express();
+var app = new Koa();
 const port = HOOK_PORT;
 
 app.use(helmet());
-app.use(express.json());
-app.set("trust proxy", true);
-
-app.use("/", hookRoutes);
-
+app.use(bodyParser());
 app.use(notFoundHandler);
-app.use(errorHandler);
+
+app.use(hookRoute.routes());
 
 app.listen(HOOK_PORT, () => {
-  console.log(`Hook listening on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });
