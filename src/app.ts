@@ -7,6 +7,7 @@ import notFoundHandler from "./middlewares/notFoundHandler";
 
 const app = new Koa();
 const port = HOOK_PORT;
+app.proxy = true;
 
 app.use(helmet());
 app.use(bodyParser());

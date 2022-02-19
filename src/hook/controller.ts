@@ -9,7 +9,7 @@ const allowed_events: Event["event_type"][] = [
 ];
 
 export const hookController = async (ctx: RouterContext) => {
-  const { event_type: eventType } = ctx.request.body as Event;
+  const { event_type: eventType } = ctx.body as Event;
   console.log("Received hookController event", {
     body: ctx.request.body,
     eventType: eventType,

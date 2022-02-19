@@ -18,10 +18,7 @@ const isAllowedOrigin = (hostname: string) => {
 };
 
 export const authenticateRequest: Middleware = async (ctx, next) => {
-  if (
-    !isAllowedOrigin(ctx.hostname) &&
-    (!ctx.headers["user-agent"] || ctx.headers["user-agent"] !== "ChargeBee")
-  ) {
+  if (!isAllowedOrigin(ctx.hostname) && ctx.get("user-agent") !== "ChargeBee") {
     console.log("requestAuthenticator error - UNEXPECTED REQUEST ORIGIN", {
       userAgent: ctx.headers["user-agent"],
       ip: ctx.ip,
@@ -50,13 +47,10 @@ export const authenticateRequest: Middleware = async (ctx, next) => {
     ctx.status = 401;
     return;
   }
-  if (
-    ctx.headers.authorization &&
-    ctx.headers.authorization.startsWith("Basic ")
-  ) {
-    const base64authorization: string = ctx.headers.authorization.substring(
-      "Basic ".length
-    );
+  if (ctx.get("authorization")?.startsWith("Basic ")) {
+    const base64authorization: string = ctx
+      .get("authorization")
+      .substring("Basic ".length);
     const authorization: string[] = Buffer.from(base64authorization, "base64")
       .toString("utf8")
       .split(":", 2);
