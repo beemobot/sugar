@@ -1,5 +1,5 @@
 import { Event } from "chargebee-typescript/lib/resources";
-import { RouterContext } from "koa-router";
+import { RouterContext } from "@koa/router";
 
 const allowed_events: Event["event_type"][] = [
   "subscription_activated",

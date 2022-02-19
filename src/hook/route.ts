@@ -1,4 +1,4 @@
-import Router from "koa-router";
+import Router from "@koa/router";
 import { hookController } from "./controller";
 import { authenticateRequest } from "./requestAuthenticator";
 

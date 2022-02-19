@@ -1,5 +1,5 @@
 import { Next } from "koa";
-import { RouterContext } from "koa-router";
+import { RouterContext } from "@koa/router";
 
 const notFoundHandler = async (ctx: RouterContext, next: Next) => {
   await next();
