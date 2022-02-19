@@ -16,7 +16,7 @@ export const hookController = async (ctx: RouterContext) => {
   });
 
   if (!allowed_events.includes(eventType || "")) {
-    console.log("processctxuest found an unknown event", {
+    console.log("process request found an unknown event", {
       event: eventType,
     });
 
