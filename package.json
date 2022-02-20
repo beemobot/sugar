@@ -28,6 +28,10 @@
     "lint": "yarn eslint './src/**/*.ts' --fix",
     "start": "yarn build && node dist/app.js",
     "start:dev": "ts-node-dev --watch src/**/*.{ts,js} src/app.ts",
+    "dev:base": "docker-compose -f docker-compose.debug.yml",
+    "dev:up": "yarn dev:base up -d",
+    "dev:down": "yarn dev:base down",
+    "docker:build": "docker build --tag sugar .",
     "build": "yarn tsc",
     "newstart": "yarn build && yarn start",
     "test": "mocha --require ts-node/register --timeout 10000 test/**/*.spec.ts"

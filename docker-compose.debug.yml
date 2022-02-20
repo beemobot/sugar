@@ -18,6 +18,7 @@ services:
     # mounting our API source directory
     volumes:
         - ./:/usr/src/app
+        - /usr/src/app/node_modules
   postgres:
       image: postgres:10.5
       restart: always
