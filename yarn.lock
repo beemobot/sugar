@@ -569,11 +569,6 @@ cross-spawn@^7.0.2:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-dayjs@^1.10.7:
-  version "1.10.7"
-  resolved "https://registry.npmjs.org/dayjs/-/dayjs-1.10.7.tgz"
-  integrity sha512-P6twpd70BcPK34K26uJ1KT3wlhpuOAPoMwJzpsIWUxHZ7wpmbdZL/hQqBDfz7hGurYSa5PhzdhDHtt319hL3ig==
-
 debug@2.6.9, debug@^2.6.9:
   version "2.6.9"
   resolved "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz"
