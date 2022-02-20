@@ -20,7 +20,7 @@ const isAllowedOrigin = (hostname: string) => {
 export const authenticateRequest: Middleware = async (ctx, next) => {
   if (!isAllowedOrigin(ctx.hostname) && ctx.get("user-agent") !== "ChargeBee") {
     console.log("requestAuthenticator error - UNEXPECTED REQUEST ORIGIN", {
-      userAgent: ctx.headers["user-agent"],
+      userAgent: ctx.get("user-agent"),
       ip: ctx.ip,
       hostname: ctx.hostname,
     });
@@ -69,7 +69,7 @@ export const authenticateRequest: Middleware = async (ctx, next) => {
     return next();
   } else {
     console.log("requestAuthenticator error - MISSING AUTHENTICATION HEADER", {
-      authHeader: ctx.headers.authorization?.slice(0, 5),
+      authHeader: ctx.get("authorization")?.slice(0, 5),
     });
 
     onAuthenticationFailure(ctx);
@@ -169,7 +169,7 @@ const canAttemptAuthentication = (ctx: Context): boolean => {
 };
 
 const getIp = (ctx: Context): string => {
-  const cfIp: string | string[] | undefined = ctx.headers["cf-connecting-ip"];
+  const cfIp: string | string[] | undefined = ctx.get("cf-connecting-ip");
   const ip: string = cfIp
     ? typeof cfIp === "string"
       ? cfIp
