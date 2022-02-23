@@ -2,3 +2,4 @@
 /node_modules/
 /src/config.json
 /src/lastUpdate.json
+yarn-error.log

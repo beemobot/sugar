@@ -1,12 +1,13 @@
-import { RequestHandler } from "express";
+import { Next } from "koa";
+import { RouterContext } from "@koa/router";
 
-const errorHandler: RequestHandler = (req, res, _next) => {
-  console.log("Invalid URL", {
-    path: req.path,
-    ip: req.ip,
-  });
-
-  res.status(404).json({});
+const notFoundHandler = async (ctx: RouterContext, next: Next) => {
+  await next();
+  const status = ctx.status || 404;
+  if (status === 404) {
+    ctx.status = 404;
+    ctx.body = {};
+  }
 };
 
-export default errorHandler;
+export default notFoundHandler;
