@@ -1,6 +1,6 @@
 # sugar
 
-sugar is a Chargebee subscriptions handler for tea, the Discord bot (https://ayu.ai/tea) using a webhook and PostgreSQL
+Sugar is a Chargebee subscriptions handler for Beemo, the Discord bot (https://beemo.gg/) using a webhook and PostgreSQL
 
 ## Getting Started
 
