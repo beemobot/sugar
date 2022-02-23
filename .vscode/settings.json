@@ -3,5 +3,8 @@
         140
     ],
     "eslint.format.enable": true,
-    "eslint.lintTask.enable": true
+    "eslint.lintTask.enable": true,
+    "cSpell.words": [
+        "CHARGEBEE"
+    ]
 }
