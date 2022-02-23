@@ -10,14 +10,15 @@
     "plugin:you-dont-need-momentjs/recommended"
   ],
   "dependencies": {
+    "@koa/router": "^10.1.1",
     "@types/chai": "^4.2.22",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "chargebee-typescript": "^2.3.0",
     "eslint": "^8.2.0",
-    "express": "^4.17.1",
-    "fs": "^0.0.1-security",
-    "helmet": "^4.6.0",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-helmet": "^6.1.0",
     "mocha": "^9.1.3",
     "pg": "^8.7.1",
     "ts-node": "^10.4.0",
@@ -37,7 +38,10 @@
     "test": "mocha --require ts-node/register --timeout 10000 test/**/*.spec.ts"
   },
   "devDependencies": {
-    "@types/express": "^4.17.13",
+    "@types/koa": "^2.13.4",
+    "@types/koa-bodyparser": "^4.3.5",
+    "@types/koa-helmet": "^6.0.4",
+    "@types/koa__router": "^8.0.11",
     "@types/node": "^16.11.7",
     "@types/pg": "^8.6.1",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
