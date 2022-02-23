@@ -1,5 +1,5 @@
 import fs from "fs";
-import { RequestHandler, Request } from "express";
+import { Context, Middleware } from "koa";
 import {
   HOOK_KEY,
   BASIC_AUTH_USERNAME,
@@ -17,44 +17,40 @@ const isAllowedOrigin = (hostname: string) => {
   return false;
 };
 
-export const authenticateRequest: RequestHandler = async (req, res, next) => {
-  if (
-    !isAllowedOrigin(req.hostname) &&
-    (!req.headers["user-agent"] || req.headers["user-agent"] !== "ChargeBee")
-  ) {
+export const authenticateRequest: Middleware = async (ctx, next) => {
+  if (!isAllowedOrigin(ctx.hostname) && ctx.get("user-agent") !== "ChargeBee") {
     console.log("requestAuthenticator error - UNEXPECTED REQUEST ORIGIN", {
-      userAgent: req.headers["user-agent"],
-      ip: req.ip,
-      hostname: req.hostname,
+      userAgent: ctx.get("user-agent"),
+      ip: ctx.ip,
+      hostname: ctx.hostname,
     });
 
-    res.status(401).json({ error: "UNEXPECTED REQUEST ORIGIN" });
+    ctx.status = 401;
+    ctx.body = { error: "UNEXPECTED REQUEST ORIGIN" };
     return;
   }
-  if (!canAttemptAuthentication(req)) {
+  if (!canAttemptAuthentication(ctx)) {
     console.log("requestAuthenticator error - MAX ATTEMPTS REACHED FOR IP", {
-      ip: req.ip,
+      ip: ctx.ip,
     });
 
-    return res
-      .status(401)
-      .json({ error: "MAX ATTEMPTS REACHED FOR " + req.ip });
+    ctx.status = 401;
+    ctx.body = { error: "MAX ATTEMPTS REACHED FOR " + ctx.ip };
+    return;
   }
-  if (!req.query.key || req.query.key !== HOOK_KEY) {
+  if (!ctx.query.key || ctx.query.key !== HOOK_KEY) {
     console.log("requestAuthenticator error - INVALID KEY", {
-      key: req.query.key?.toString().slice(-5),
+      key: ctx.query.key?.toString().slice(-5),
     });
 
-    onAuthenticationFailure(req);
-    return res.status(401).json({ error: "INVALID KEY" });
+    onAuthenticationFailure(ctx);
+    ctx.status = 401;
+    return;
   }
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Basic ")
-  ) {
-    const base64authorization: string = req.headers.authorization.substring(
-      "Basic ".length
-    );
+  if (ctx.get("authorization")?.startsWith("Basic ")) {
+    const base64authorization: string = ctx
+      .get("authorization")
+      .substring("Basic ".length);
     const authorization: string[] = Buffer.from(base64authorization, "base64")
       .toString("utf8")
       .split(":", 2);
@@ -66,17 +62,19 @@ export const authenticateRequest: RequestHandler = async (req, res, next) => {
         password: (password || "").slice(-5),
       });
 
-      onAuthenticationFailure(req);
-      return res.status(401).json({ error: "INVALID CREDENTIALS" });
+      onAuthenticationFailure(ctx);
+      ctx.status = 401;
+      return;
     }
     return next();
   } else {
     console.log("requestAuthenticator error - MISSING AUTHENTICATION HEADER", {
-      authHeader: req.headers.authorization?.slice(0, 5),
+      authHeader: ctx.get("authorization")?.slice(0, 5),
     });
 
-    onAuthenticationFailure(req);
-    return res.status(401).json({ error: "MISSING AUTHENTICATION HEADER" });
+    onAuthenticationFailure(ctx);
+    ctx.status = 401;
+    return;
   }
 };
 
@@ -122,8 +120,8 @@ class IpAuthData {
 
 const authCache: { [ip: string]: IpAuthData } = {};
 
-const onAuthenticationFailure = (req: Request): void => {
-  const ip: string = getIp(req);
+const onAuthenticationFailure = (ctx: Context): void => {
+  const ip: string = getIp(ctx);
   let ipAuthData = authCache[ip];
   if (!ipAuthData) {
     authCache[ip] = new IpAuthData(false);
@@ -151,8 +149,8 @@ const onAuthenticationFailure = (req: Request): void => {
   }
 };
 
-const canAttemptAuthentication = (req: Request): boolean => {
-  const ip: string = getIp(req);
+const canAttemptAuthentication = (ctx: Context): boolean => {
+  const ip: string = getIp(ctx);
   const ipAuthData = authCache[ip];
   if (ipAuthData) {
     if (ipAuthData.isBlocked()) {
@@ -170,13 +168,13 @@ const canAttemptAuthentication = (req: Request): boolean => {
   return true;
 };
 
-const getIp = (req: Request): string => {
-  const cfIp: string | string[] | undefined = req.headers["cf-connecting-ip"];
+const getIp = (ctx: Context): string => {
+  const cfIp: string | string[] | undefined = ctx.get("cf-connecting-ip");
   const ip: string = cfIp
     ? typeof cfIp === "string"
       ? cfIp
       : cfIp[0]
-    : req.ip;
+    : ctx.ip;
   return ip;
 };
 
