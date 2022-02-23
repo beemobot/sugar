@@ -133,14 +133,14 @@ const onAuthenticationFailure = (ctx: Context): void => {
   } else if (ipAuthData.isBlocked()) {
     return;
   } else if (ipAuthData.blacklistable()) {
-    fs.readFile("./src/hook/blocked-ips.json", "utf8", (err, data) => {
+    fs.readFile(`${__dirname}/blocked-ips.json`, "utf8", (err, data) => {
       if (err) {
         return console.log(err);
       }
       const obj: any = JSON.parse(data);
       obj[ip] = new Date().getTime();
       fs.writeFile(
-        "./src/hook/blocked-ips.json",
+        `${__dirname}/blocked-ips.json`,
         JSON.stringify(obj),
         "utf8",
         () => console.log("Blocked IP " + ip)
@@ -158,7 +158,7 @@ const canAttemptAuthentication = (ctx: Context): boolean => {
     }
     return true;
   }
-  const data: string = fs.readFileSync("./src/hook/blocked-ips.json", "utf8");
+  const data: string = fs.readFileSync(`${__dirname}/blocked-ips.json`, "utf8");
   const obj: any = JSON.parse(data);
   if (obj[ip]) {
     authCache[ip] = new IpAuthData(true);

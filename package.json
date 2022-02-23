@@ -1,7 +1,7 @@
 {
   "name": "sugar",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "main": "dist/app.js",
   "repository": "git@github.com:AyuAi/sugar.git",
   "author": "Ayu <ayu@ayu.dev>",
   "license": "MIT",
@@ -15,7 +15,6 @@
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "chargebee-typescript": "^2.3.0",
-    "dayjs": "^1.10.7",
     "eslint": "^8.2.0",
     "koa": "^2.13.4",
     "koa-bodyparser": "^4.3.0",
@@ -28,8 +27,12 @@
   "scripts": {
     "clean": "rm -rf ./dist",
     "lint": "yarn eslint './src/**/*.ts' --fix",
-    "start": "ts-node src/index.ts",
-    "start:dev": "ts-node-dev --watch src/**/*.{ts,js} src/index.ts",
+    "start": "yarn build && node dist/app.js",
+    "start:dev": "ts-node-dev --watch src/**/*.{ts,js} src/app.ts",
+    "dev:base": "docker-compose -f docker-compose.debug.yml",
+    "dev:up": "yarn dev:base up -d",
+    "dev:down": "yarn dev:base down",
+    "docker:build": "docker build --tag sugar .",
     "build": "yarn tsc",
     "newstart": "yarn build && yarn start",
     "test": "mocha --require ts-node/register --timeout 10000 test/**/*.spec.ts"
