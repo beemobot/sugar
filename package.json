@@ -49,6 +49,7 @@
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-you-dont-need-momentjs": "^1.6.0",
+    "prisma": "^3.10.0",
     "ts-node-dev": "^1.1.8"
   }
 }
