@@ -29,17 +29,26 @@ const handleEvent = async (event: Event) => {
     case "subscription_reactivated":
     case "subscription_renewed":
     case "subscription_resumed":
-      await activateSubscription();
+      await activateSubscription(
+        event.content.subscription,
+        event.content.customer
+      );
       break;
 
     case "subscription_changed":
-      await changeSubscription();
+      await changeSubscription(
+        event.content.subscription,
+        event.content.customer
+      );
       break;
 
     case "subscription_paused":
     case "subscription_deleted":
     case "subscription_cancelled":
-      await cancelSubscription();
+      await cancelSubscription(
+        event.content.subscription,
+        event.content.customer
+      );
       break;
     default:
       throw new HookError("Unsupported event", 404);
