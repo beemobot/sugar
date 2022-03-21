@@ -6,3 +6,32 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+}
+
+model subscription {
+  cb_subscription_id String             @id
+  server_id          String
+  server_invite_link String?
+  status             SubscriptionStatus @default(ACTIVE)
+  cb_customer_id     String
+  cb_customer        cb_customer        @relation(fields: [cb_customer_id], references: [cb_customer_id])
+  expiration_date    DateTime
+  created_at         DateTime           @default(now())
+  updated_at         DateTime           @default(now())
+
+  @@index([server_id], map: "server_id_index")
+}
+
+model cb_customer {
+  cb_customer_id        String         @id @unique
+  discord_discriminator String
+  discord_id            Int
+  email                 String
+  created_at            DateTime       @default(now())
+  subscription          subscription[]
+}

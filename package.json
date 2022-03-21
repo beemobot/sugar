@@ -11,6 +11,7 @@
   ],
   "dependencies": {
     "@koa/router": "^10.1.1",
+    "@prisma/client": "^3.11.0",
     "@types/chai": "^4.2.22",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
@@ -49,7 +50,7 @@
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-you-dont-need-momentjs": "^1.6.0",
-    "prisma": "^3.10.0",
+    "prisma": "^3.11.0",
     "ts-node-dev": "^1.1.8"
   }
 }
