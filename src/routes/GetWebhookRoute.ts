@@ -11,6 +11,7 @@ const router = express.Router()
 // IMPORTANT: Make sure all these events are implemented before adding them to this list.
 const supported_events: string[] = [
     "subscription_activated",
+    "subscription_reactivated",
     "subscription_paused",
     "subscription_cancelled"
 ]
