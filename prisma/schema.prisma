@@ -8,6 +8,7 @@ datasource db {
 }
 
 model SubscriptionCancellations {
-  guild_id    BigInt    @unique
-  cancels_at  DateTime
+  guild_id        BigInt    @unique
+  cancels_at      BigInt
+  subscription_id String
 }

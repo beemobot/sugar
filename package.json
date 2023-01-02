@@ -12,6 +12,7 @@
     "typescript": "^4.9.4"
   },
   "dependencies": {
+    "@prisma/client": "4.8.0",
     "chargebee-typescript": "^2.15.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",

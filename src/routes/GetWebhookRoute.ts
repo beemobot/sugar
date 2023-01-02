@@ -1,16 +1,16 @@
-import {ChargebeeEvent} from "../types/chargebee";
-import {ValidationError} from "runtypes";
+import { ChargebeeEvent } from "../types/chargebee";
+import { ValidationError } from "runtypes";
 import express from "express";
 import { chargebee } from "../connections/chargebee";
-import {Server} from "../types/server";
-import {kafka} from "../connections/kafka";
+import { Server } from "../types/server";
+import { SubscriptionCancelProcessor } from "../processors/SubscriptionCancelProcessor";
+import {SubscriptionActivateProcessor} from "../processors/SubscriptionActivateProcessor";
 
 const router = express.Router()
 
 // IMPORTANT: Make sure all these events are implemented before adding them to this list.
 const supported_events: string[] = [
     "subscription_activated",
-    "subscription_resumed",
     "subscription_paused",
     "subscription_cancelled"
 ]
@@ -37,6 +37,8 @@ router.get('webhook', async (request, response) => {
             return
         }
 
+        processed_events.add(event.id)
+
         const subscription = (await chargebee.subscription.retrieve(event.content.subscription.id).request()).subscription
         if (subscription == null) {
             console.error(`Failed to find the subscription (${event.content.subscription.id}).`)
@@ -44,21 +46,18 @@ router.get('webhook', async (request, response) => {
             return
         }
 
+        // DEBATABLE: We should just tell Chargebee to go ahead and continue it's day before we finish processing.
+        // Because the retries on our side (e.g. when persisting cancellations to db or sending to kafka) takes more
+        // than 10 seconds each retry which is way past Chargebee's timeout.
+        response.sendStatus(204)
+
         const server: Server = { id: subscription.cf_discord_server_id }
+        if (event.event_type === 'subscription_paused' || event.event_type === 'subscription_cancelled') {
+            // Webstorm won't stop nagging about the result for this Promise being ignored.
+            SubscriptionCancelProcessor.process(server, subscription).then(() => {})
+        }
 
-        // TODO: Have different handling based on the event_type, for example, if cancellation then do not send and
-        //       instead place on schedule while storing the cancellations on the database (for persistence) while having
-        //       the scheduler remove that specific row once the cancellation was proceeded.
-        //       Additional notes: Cancellation will re-check on the database first, then re-checks Chargebee to see if
-        //       it is still cancelled to ensure we aren't canceling a somehow still-active subscription.
-        await kafka.producer.send({
-            topic: kafka.topic,
-            messages: [
-                { value: JSON.stringify({ event: event.event_type, server: server.id }) }
-            ]
-        })
-
-        processed_events.add(event.id)
+        SubscriptionActivateProcessor.process(server, subscription).then(() => {})
     } catch (exception) {
         if (exception instanceof ValidationError) {
             response.status(400).json({ error: 'Invalid Request.' })

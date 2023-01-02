@@ -7,7 +7,7 @@ import {Expresso} from "./connections/express";
 
 dotenv.config()
 
-export const prisma = new PrismaClient()
+export const prisma: PrismaClient = new PrismaClient()
 async function init() {
     try {
         Chargebee.init()
