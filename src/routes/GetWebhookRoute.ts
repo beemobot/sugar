@@ -61,7 +61,10 @@ router.get('webhook', async (request, response) => {
     } catch (exception) {
         if (exception instanceof ValidationError) {
             response.status(400).json({ error: 'Invalid Request.' })
+            return
         }
+
+        console.error('An exception occurred while trying to handle webhook request.', exception)
     }
 })
 
