@@ -14,11 +14,9 @@ the Chargebee API (to save time from validating and parsing).
 
 #### 📖 Cancel-culture
 
-Kimbap handles cancellations by first storing the cancellation in the database (`server, ends_at`) and scheduling the 
+Kimbap handles cancellations by first storing the cancellation in the database (`server, ends_at, subscription_id`) and scheduling the 
 cancellation internally before looking into the database to see if the cancellation is still valid and also looking 
 into Chargebee to ensure we aren't somehow cancelling an active subscription before sending it over to Kafka.
-
-Note: As of writing, this is not implemented yet.
 
 #### 🍾 Social
 
