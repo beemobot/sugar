@@ -55,6 +55,7 @@ router.get('webhook', async (request, response) => {
         if (event.event_type === 'subscription_paused' || event.event_type === 'subscription_cancelled') {
             // Webstorm won't stop nagging about the result for this Promise being ignored.
             SubscriptionCancelProcessor.process(server, subscription).then(() => {})
+            return
         }
 
         SubscriptionActivateProcessor.process(server, subscription).then(() => {})
