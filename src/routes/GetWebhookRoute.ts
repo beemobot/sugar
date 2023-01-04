@@ -5,6 +5,7 @@ import { chargebee } from "../connections/chargebee";
 import { Server } from "../types/server";
 import { SubscriptionCancelProcessor } from "../processors/SubscriptionCancelProcessor";
 import {SubscriptionActivateProcessor} from "../processors/SubscriptionActivateProcessor";
+import * as Sentry from '@sentry/node';
 
 const router = express.Router()
 
@@ -31,6 +32,7 @@ router.post('/webhook/', async (request, response) => {
         }
 
         const event = ChargebeeEvent.check(request.body)
+
         if (!supported_events.includes(event.event_type.toLowerCase())) {
             response.status(400).json({ error: 'Unsupported event.'})
             return
@@ -68,14 +70,21 @@ router.post('/webhook/', async (request, response) => {
         }
 
         response.status(400).json({ error: 'Unrecognized event.' })
-    } catch (exception) {
+    } catch (exception: any) {
         if (exception instanceof ValidationError) {
             response.status(400).json({ error: 'Invalid Request.' })
             return
         }
 
-        console.error('An exception occurred while trying to handle webhook request.', exception)
+        // IMPORTANT: Make-shift way to transform an object error into an Error.
+        if (exception.message != null && exception.constructor.name === 'Object') {
+            Sentry.captureException(new Error(exception.message))
+        } else {
+            Sentry.captureException(exception)
+        }
+
         response.status(500)
+        console.error('An exception occurred while trying to handle webhook request.', exception)
     }
 })
 

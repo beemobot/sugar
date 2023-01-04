@@ -1,6 +1,7 @@
 import express from "express";
 import expressBasicAuth from "express-basic-auth";
 import GetWebhookRoute from "../routes/GetWebhookRoute";
+import * as Sentry from '@sentry/node';
 export const server = express()
 
 function init() {
@@ -23,6 +24,7 @@ function init() {
     }
 
     server
+        .use(Sentry.Handlers.requestHandler())
         .get('/', (request, response) => response.json({ hello: "Do you want some kimbap?" }))
         .use(express.json())
         .use((request, _, next) => {
