@@ -49,7 +49,7 @@ docker build -t kimbap .
 
 Once the image is built, you can start the container by running the following command:
 ```shell
-docker start --name kimbap -p [server_port]:[server_port] --env-file .env kimbap
+docker run --name kimbap -p [server_port]:[server_port] --env-file .env kimbap
 ```
 
 > **Note**
