@@ -55,3 +55,23 @@ docker start --name kimbap -p [server_port]:[server_port] --env-file .env kimbap
 > **Note**
 > `[server_port]` should be the server port that you configured on the configuration 
 > since that is what Kimbap uses.
+
+### 🐝 Setting up with Chargebee
+
+Before we can start receiving events from Chargebee, we have to configure Chargebee itself and to do that, let us 
+first follow the steps:
+1. Create a READ_ONLY key (can be found on the `/apikeys_and_webhooks/api` path of your Chargebee site) and install it into your configuration.
+2. Add Kimbap into the webhooks (can be located on `/apikeys_and_webhooks/webhooks` path of your Chargebee site) and select the [following events](#-chargebee-events) plus configure the basic authentication.
+3. Kimbap should now start receiving events.
+
+### 🔥 Chargebee Events
+
+The following events needed to be selected (nothing more, nothing less) to have Kimbap work:
+- [x] Subscription Created
+- [x] Subscription Created with Backdating
+- [x] Subscription Reactivated
+- [x] Subscription Reactivated with Backdating
+- [x] Subscription Started
+- [x] Subscription Paused
+- [x] Subscription Cancelled
+- [x] Subscription Resumed
