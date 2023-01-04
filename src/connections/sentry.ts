@@ -1,7 +1,9 @@
 import * as Sentry from '@sentry/node'
+import {Logger} from "@beemobot/common";
+import {TAG} from "../index.js";
 function init() {
     if (process.env.SENTRY_DSN == null) {
-        console.error('Sentry is not configured, discarding request to start.')
+        Logger.error(TAG, 'Sentry is not configured, discarding request to start.')
         process.exit()
         return
     }

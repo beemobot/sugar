@@ -1,10 +1,12 @@
 import {ChargeBee} from "chargebee-typescript";
+import {Logger} from "@beemobot/common";
+import {TAG} from "../index.js";
 
 export let chargebee = new ChargeBee();
 
 function init() {
     if (process.env.CHARGEBEE_SITE == null || process.env.CHARGEBEE_KEY == null) {
-        console.error('Chargebee is not configured, discarding request to start.')
+        Logger.error(TAG, 'Chargebee is not configured, discarding request to start.')
         process.exit()
         return
     }
