@@ -25,5 +25,33 @@ reasons (initialization, synchronization, etc.). All Kimbap does is talk to Char
 
 #### 📦 Setup
 
-There is no setup currently available, this entire module is still in active development and hasn't even reached a single public 
-version as of writing. This will be updated with proper installation once ready.
+> **Warning**
+> This assumes that the `.env` is configured properly and contains all the properties 
+> that are needed. If not, please ensure that is done first.
+> 
+> Additionally, make sure that this does not use the same database as Tea or any existing project, it can be on the same 
+> instance, but ensure that the database itself is different. Prisma will ask you to reset the database 
+> if that happens, that's when you know it's the same table.
+
+In order to set-up Kimbap, we have to first migrate our database with Prisma using the following command:
+```shell
+# Yarn
+yarn run prisma migrate deploy
+
+# Node
+npx prisma migrate deploy
+```
+
+After doing so, you can now build the Docker image by running the following:
+```shell
+docker build -t kimbap .
+```
+
+Once the image is built, you can start the container by running the following command:
+```shell
+docker start --name kimbap -p [server_port]:[server_port] --env-file .env kimbap
+```
+
+> **Note**
+> `[server_port]` should be the server port that you configured on the configuration 
+> since that is what Kimbap uses.
