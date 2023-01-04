@@ -24,6 +24,10 @@ function init() {
 
     server
         .use(express.json())
+        .use((request, _, next) => {
+            console.log(JSON.stringify({ method: request.method, route: request.path, ip: request.ip, data: request.body }));
+            next();
+        })
         .use(expressBasicAuth({ users: account }))
         .use(GetWebhookRoute)
 

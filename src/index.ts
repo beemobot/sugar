@@ -1,9 +1,9 @@
 import dotenv from 'dotenv'
 
-import {PrismaClient} from "prisma/prisma-client/scripts/default-index";
 import {Chargebee} from "./connections/chargebee";
 import {Koffaka} from "./connections/kafka";
 import {Expresso} from "./connections/express";
+import {PrismaClient} from "@prisma/client";
 
 dotenv.config()
 

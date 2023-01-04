@@ -40,7 +40,7 @@ async function process(server: Server, subscription: Subscription) {
 }
 
 async function handleScheduledCancellation(server: Server) {
-    const persistedCancellationRequest: SubscriptionCancellations = await prisma.subscriptionCancellations.findFirst({ where: { guild_id: BigInt(server.id) }})
+    const persistedCancellationRequest: SubscriptionCancellations | null = await prisma.subscriptionCancellations.findFirst({ where: { guild_id: BigInt(server.id) }})
 
     if (persistedCancellationRequest == null) {
         console.error('Cancellation request for server (' + server.id + ") cannot be found. Discarding cancellation.")
@@ -83,7 +83,10 @@ async function resetPremiumPlan(server: Server) {
 
 async function deletePersistedCancellation(server: Server){
     try {
-        await prisma.subscriptionCancellations.delete({ where: { guild_id: BigInt(server.id) } })
+        const cancellation = await prisma.subscriptionCancellations.findFirst({ where: { guild_id: BigInt(server.id) } })
+        if (cancellation != null) {
+            await prisma.subscriptionCancellations.delete({ where: { guild_id: BigInt(server.id) } })
+        }
     } catch (ex) {
         console.error('Failed to delete the cancellation request from the database for server (' + server.id + "). Retrying again in 10 seconds.", ex)
         setTimeout(async () => deletePersistedCancellation(server), 10 * 1000)
