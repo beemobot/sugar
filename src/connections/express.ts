@@ -23,6 +23,7 @@ function init() {
     }
 
     server
+        .get('/', (request, response) => response.json({ hello: "Do you want some kimbap?" }))
         .use(express.json())
         .use((request, _, next) => {
             console.log(JSON.stringify({ method: request.method, route: request.path, ip: request.ip, data: request.body }));
@@ -34,6 +35,7 @@ function init() {
     server.listen(process.env.SERVER_PORT, () => {
         console.log('--------------- Kimbap: Server')
         console.log('Connection: http://localhost:' + process.env.SERVER_PORT)
+        console.log('Webhook: http://localhost:' + process.env.SERVER_PORT + "/webhook")
         console.log('--------------- ')
     })
 }
