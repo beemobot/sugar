@@ -1,18 +1,18 @@
-import {Kafka, Producer} from "kafkajs";
+import {KafkaConnection, Logger} from "@beemobot/common";
+import {TAG} from "../index.js";
 
-export let kafka: { producer: Producer, topic: string }
+export let kafka: KafkaConnection
 
 async function init() {
     process.env.KAFKAJS_NO_PARTITIONER_WARNING = "1"
-    if (process.env.KAFKA_CLIENT_ID == null || process.env.KAFKA_BROKERS == null || process.env.KAFKA_TOPIC == null) {
-        console.error('Kafka is not configured, discarding request to start.')
+    if (process.env.KAFKA_HOST == null) {
+        Logger.error(TAG, 'Kafka is not configured, discarding request to start.')
         process.exit()
         return
     }
-    let kafkaConnection = new Kafka({ clientId: process.env.KAFKA_CLIENT_ID, brokers: process.env.KAFKA_BROKERS.split(',') })
-    kafka = { producer: kafkaConnection.producer(), topic: process.env.KAFKA_TOPIC }
 
-    await kafka.producer.connect()
+    kafka = new KafkaConnection(process.env.KAFKA_HOST, "sugar-kimbap", "sugar-kimbap", "-2")
+    await kafka.start()
 }
 
 export const Koffaka = { init: init }

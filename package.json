@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Kimbap is a Chargebee webhook processor that processes data and redirects the data to a channel such as Kafka.",
   "main": "index.js",
+  "type": "module",
   "author": "shindoumihou",
   "license": "MIT",
   "devDependencies": {
@@ -12,16 +13,17 @@
     "typescript": "^4.9.4"
   },
   "dependencies": {
+    "@beemobot/common": "^1.0.0",
     "@prisma/client": "4.8.0",
     "@sentry/node": "^7.28.1",
     "chargebee-typescript": "^2.15.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-basic-auth": "^1.2.1",
-    "kafkajs": "^2.2.3",
     "runtypes": "^6.6.0"
   },
   "scripts": {
-    "serve": "ts-node ./src/index.ts"
+    "build": "rm -rf dist/ && tsc",
+    "serve": "node --enable-source-maps dist/index.js"
   }
 }

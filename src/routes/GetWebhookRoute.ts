@@ -1,10 +1,10 @@
-import { ChargebeeEvent } from "../types/chargebee";
+import { ChargebeeEvent } from "../types/chargebee.js";
 import { ValidationError } from "runtypes";
 import express from "express";
-import { chargebee } from "../connections/chargebee";
-import { Server } from "../types/server";
-import { SubscriptionCancelProcessor } from "../processors/SubscriptionCancelProcessor";
-import {SubscriptionActivateProcessor} from "../processors/SubscriptionActivateProcessor";
+import { chargebee } from "../connections/chargebee.js";
+import { Server } from "../types/server.js";
+import { SubscriptionCancelProcessor } from "../processors/SubscriptionCancelProcessor.js";
+import {SubscriptionActivateProcessor} from "../processors/SubscriptionActivateProcessor.js";
 import * as Sentry from '@sentry/node';
 
 const router = express.Router()

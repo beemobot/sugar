@@ -2,6 +2,13 @@
 # yarn lockfile v1
 
 
+"@beemobot/common@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@beemobot/common/-/common-1.0.0.tgz#d7b4ef1c47d9d3974b81433760ca70aa7cdb8167"
+  integrity sha512-7cnly7AIW+Ag1/NfQ8Ji1o6WcXLecDQDYLR18GwFhf2k9Hva9oZo6u2e/qAed0Ixij1/pJzE53DZHAczgvQaSA==
+  dependencies:
+    kafkajs "^2.2.3"
+
 "@cspotcode/source-map-support@^0.8.0":
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz#00629c35a688e05a88b1cda684fb9d5e73f000a1"

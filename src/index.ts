@@ -1,14 +1,15 @@
 import dotenv from 'dotenv'
 
-import {Chargebee} from "./connections/chargebee";
-import {Koffaka} from "./connections/kafka";
-import {Expresso} from "./connections/express";
+import {Chargebee} from "./connections/chargebee.js";
+import {Koffaka} from "./connections/kafka.js";
+import {Expresso} from "./connections/express.js";
 import {PrismaClient} from "@prisma/client";
-import {Sentryboo} from "./connections/sentry";
+import {Sentryboo} from "./connections/sentry.js";
 
 dotenv.config()
 
 export const prisma: PrismaClient = new PrismaClient()
+export const TAG = "Kimbap"
 async function init() {
     try {
         Sentryboo.init()

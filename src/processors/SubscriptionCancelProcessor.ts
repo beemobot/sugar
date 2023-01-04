@@ -1,18 +1,21 @@
 import {Subscription} from "chargebee-typescript/lib/resources";
-import {Server} from "../types/server";
-import {prisma} from "../index";
-import {kafka} from "../connections/kafka";
-import {chargebee} from "../connections/chargebee";
+import {Server} from "../types/server.js";
+import {prisma, TAG} from "../index.js";
+import {kafka} from "../connections/kafka.js";
+import {chargebee} from "../connections/chargebee.js";
 import {SubscriptionCancellations} from "@prisma/client";
+import {KEY_SET_PREMIUM_PLAN, PREMIUM_PLAN_TOPIC} from "../kafka/clients/PremiumManagentClient.js";
+import {createPremiumManagementData, createRecordHeaders} from "../utils/utils.js";
+import {Logger} from "@beemobot/common";
 
 async function process(server: Server, subscription: Subscription) {
     try {
-        console.info('Attempting to process subscription (' + subscription.id + ') for server (' + server.id + ') cancellation request...')
+        Logger.info(TAG, 'Attempting to process subscription (' + subscription.id + ') for server (' + server.id + ') cancellation request...')
 
         let cancel_at = subscription.cancelled_at;
         if (cancel_at == null) {
             if (subscription.pause_date == null) {
-                console.error(`Subscription (${subscription.id}) doesn't seem to be cancellable.`)
+                Logger.wtf(TAG, `Subscription (${subscription.id}) doesn't seem to be cancellable.`)
                 return
             }
 
@@ -27,7 +30,7 @@ async function process(server: Server, subscription: Subscription) {
 
         // DEBATABLE: I don't find a real point in keeping any cancellations that will happen in less than a minute, therefore, let's just cancel immediately.
         if (cancel_at - currentEpochSeconds <= 60) {
-            console.info('Cancellation for subscription (' + subscription.id + ") is deemed too close for persistence (<= 60 seconds), proceeding immediate cancellation.")
+            Logger.info(TAG, 'Cancellation for subscription (' + subscription.id + ") is deemed too close for persistence (<= 60 seconds), proceeding immediate cancellation.")
             await resetPremiumPlan(server)
             return
         }
@@ -35,7 +38,7 @@ async function process(server: Server, subscription: Subscription) {
         await createPersistedCancellation(server, cancel_at, subscription)
         setTimeout(() => handleScheduledCancellation(server), (cancel_at - currentEpochSeconds) * 1000)
     } catch (ex) {
-        console.error('An error occurred while trying to schedule cancellation for subscription (' + subscription.id + ') and server (' + server.id + ').', ex)
+        Logger.error(TAG, 'An error occurred while trying to schedule cancellation for subscription (' + subscription.id + ') and server (' + server.id + ').', ex)
     }
 }
 
@@ -43,25 +46,25 @@ async function handleScheduledCancellation(server: Server) {
     const persistedCancellationRequest: SubscriptionCancellations | null = await prisma.subscriptionCancellations.findFirst({ where: { guild_id: BigInt(server.id) }})
 
     if (persistedCancellationRequest == null) {
-        console.error('Cancellation request for server (' + server.id + ") cannot be found. Discarding cancellation.")
+        Logger.error(TAG, 'Cancellation request for server (' + server.id + ") cannot be found. Discarding cancellation.")
         return
     }
 
     const subscription = (await chargebee.subscription.retrieve(persistedCancellationRequest.subscription_id).request()).subscription
     if (subscription == null) {
-        console.error('Failed to find subscription (' + persistedCancellationRequest.subscription_id + ') for server (' + server.id + ') on Chargebee. ' +
+        Logger.error(TAG, 'Failed to find subscription (' + persistedCancellationRequest.subscription_id + ') for server (' + server.id + ') on Chargebee. ' +
             "Proceeding with premium plan reset.")
         await resetPremiumPlan(server)
         return
     }
 
     if (subscription.cancelled_at == null && subscription.pause_date == null) {
-        console.error("Subscription (" + persistedCancellationRequest.subscription_id + ") doesn't look to be under a cancelling state. Discarding cancellation.")
+        Logger.error(TAG, "Subscription (" + persistedCancellationRequest.subscription_id + ") doesn't look to be under a cancelling state. Discarding cancellation.")
         await deletePersistedCancellation(server)
         return
     }
 
-    console.info('Attempting to cancel subscription (' + persistedCancellationRequest.subscription_id + ') for server (' + server.id + ').')
+    Logger.info(TAG, 'Attempting to cancel subscription (' + persistedCancellationRequest.subscription_id + ') for server (' + server.id + ').')
     await cancel(server)
 }
 
@@ -70,12 +73,11 @@ async function cancel(server: Server) {
     await deletePersistedCancellation(server)
 }
 
-// TODO: Use latte-js for sending kafka messages.
 async function resetPremiumPlan(server: Server) {
     try {
-        await kafka.producer.send({ topic: kafka.topic, messages: [{ value: JSON.stringify({ guildId: server.id, premiumPlan: 'none' }) }]})
+        await kafka.send(PREMIUM_PLAN_TOPIC, KEY_SET_PREMIUM_PLAN, createPremiumManagementData(server, 'none'), createRecordHeaders())
     } catch (ex) {
-        console.error('Failed to send cancellation request to Kafka for server (' + server.id + "). Retrying again in 10 seconds.", ex)
+        Logger.error(TAG, 'Failed to send cancellation request to Kafka for server (' + server.id + "). Retrying again in 10 seconds.", ex)
         await new Promise((resolve) => setTimeout(resolve, 10 * 1000))
         await resetPremiumPlan(server)
     }
@@ -89,7 +91,7 @@ async function deletePersistedCancellation(server: Server){
             await prisma.subscriptionCancellations.delete({ where: { guild_id: BigInt(server.id) } })
         }
     } catch (ex) {
-        console.error('Failed to delete the cancellation request from the database for server (' + server.id + "). Retrying again in 10 seconds.", ex)
+        Logger.error(TAG, 'Failed to delete the cancellation request from the database for server (' + server.id + "). Retrying again in 10 seconds.", ex)
         setTimeout(async () => deletePersistedCancellation(server), 10 * 1000)
     }
 }
@@ -102,7 +104,7 @@ async function createPersistedCancellation(server: Server, ends_at: number, subs
             create: { guild_id: BigInt(server.id), cancels_at: BigInt(ends_at), subscription_id: subscription.id }
         })
     } catch (ex) {
-        console.error('Failed to persist cancellation request to database for server (' + server.id + "). Retrying again in 10 seconds.", ex)
+        Logger.error(TAG, 'Failed to persist cancellation request to database for server (' + server.id + "). Retrying again in 10 seconds.", ex)
         await new Promise((resolve) => setTimeout(resolve, 10 * 1000))
         await createPersistedCancellation(server, ends_at, subscription)
     }

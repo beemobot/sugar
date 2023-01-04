@@ -1,7 +1,9 @@
 import express from "express";
 import expressBasicAuth from "express-basic-auth";
-import GetWebhookRoute from "../routes/GetWebhookRoute";
+import GetWebhookRoute from "../routes/GetWebhookRoute.js";
 import * as Sentry from '@sentry/node';
+import {Logger} from "@beemobot/common";
+import {TAG} from "../index.js";
 export const server = express()
 
 function init() {
@@ -9,7 +11,7 @@ function init() {
     const password = process.env.BASIC_AUTH_PASSWORD
 
     if (username == null || password == null) {
-        console.error('Basic authentication is not configured, discarding request to start.')
+        Logger.error(TAG, 'Basic authentication is not configured, discarding request to start.')
         process.exit()
         return
     }
@@ -18,7 +20,7 @@ function init() {
     account[username] = password
 
     if (process.env.SERVER_PORT == null) {
-        console.error('Server is not configured, discarding request to start.')
+        Logger.error(TAG, 'Server is not configured, discarding request to start.')
         process.exit()
         return
     }
@@ -28,17 +30,17 @@ function init() {
         .get('/', (request, response) => response.json({ hello: "Do you want some kimbap?" }))
         .use(express.json())
         .use((request, _, next) => {
-            console.log(JSON.stringify({ method: request.method, route: request.path, ip: request.ip, data: request.body }));
+            Logger.info(TAG, 'Received a request ' + JSON.stringify({ method: request.method, route: request.path, ip: request.ip, data: request.body }));
             next();
         })
         .use(expressBasicAuth({ users: account }))
         .use(GetWebhookRoute)
 
     server.listen(process.env.SERVER_PORT, () => {
-        console.log('--------------- Kimbap: Server')
-        console.log('Connection: http://localhost:' + process.env.SERVER_PORT)
-        console.log('Webhook: http://localhost:' + process.env.SERVER_PORT + "/webhook")
-        console.log('--------------- ')
+        Logger.info(TAG, 'Sugar Kimbap is now ready to receive connections. ' + JSON.stringify({
+            connection: 'http://localhost:' + process.env.SERVER_PORT,
+            webhook: 'http://localhost:' + process.env.SERVER_PORT + "/webhook"
+        }))
     })
 }
 
