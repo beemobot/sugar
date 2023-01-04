@@ -17,7 +17,8 @@ const supported_events: string[] = [
     "subscription_reactivated",
     "subscription_reactivated_with_backdating",
     "subscription_paused",
-    "subscription_cancelled"
+    "subscription_cancelled",
+    "subscription_resumed"
 ]
 
 // IMPORTANT: This contains an array of all the ids that we have processed, to prevent duplicate handling within
