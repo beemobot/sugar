@@ -2,6 +2,7 @@ import {Server} from "../types/server";
 import {Subscription} from "chargebee-typescript/lib/resources";
 import {kafka} from "../connections/kafka";
 
+// TODO: Use latte-js for sending kafka messages.
 async function process(server: Server, subscription: Subscription) {
     try {
         console.info('Attempting to send subscription (' + subscription.id + ') for server (' + server.id + ') activation request...')

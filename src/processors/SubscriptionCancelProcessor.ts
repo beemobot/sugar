@@ -70,6 +70,7 @@ async function cancel(server: Server) {
     await deletePersistedCancellation(server)
 }
 
+// TODO: Use latte-js for sending kafka messages.
 async function resetPremiumPlan(server: Server) {
     try {
         await kafka.producer.send({ topic: kafka.topic, messages: [{ value: JSON.stringify({ guildId: server.id, premiumPlan: 'none' }) }]})
