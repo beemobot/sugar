@@ -99,9 +99,7 @@ export async function retriable(task: string, action: () => Promise<void> | void
     try {
         await action()
     } catch (e) {
-        // IMPORTANT (and DEBATABLE): In every 5 minutes of the retry or the first retry, send a notification to
-        // Sentry about what happened.
-        if (retries === 1 || retries % 30 == 0) {
+        if (retries === 1) {
             Sentry.setExtra('task', task)
             Sentry.captureException(e)
         }
