@@ -47,10 +47,10 @@ function sendWebhook(server: Server, plan: string, subscription: ChargebeeSubscr
                         {
                             name: 'Details',
                             value: [
-                                '**Server**: ' + server.id,
+                                '**Server**: ' + formatServer(server),
                                 '**Plan**: ' + plan.toUpperCase(),
-                                '**Subscription**: ' + format(subscription),
-                                '**User**: ' + customer.cf_discord_discriminator + ' (`' + customer.cf_discord_id_dont_know_disgdfindmyid + '`)',
+                                '**Subscription**: ' + formatSubscription(subscription),
+                                '**User**: ' + formatCustomer(customer),
                             ].join('\n'),
                         }
                     ],
@@ -70,9 +70,9 @@ function sendWebhook(server: Server, plan: string, subscription: ChargebeeSubscr
                     {
                         name: 'Details',
                         value: [
-                            '**Server**: ' + server.id,
-                            '**Subscription**: ' + format(subscription),
-                            '**User**: ' + customer.cf_discord_discriminator + ' (`' + customer.cf_discord_id_dont_know_disgdfindmyid + '`)',
+                            '**Server**: ' + formatServer(server),
+                            '**Subscription**: ' + formatSubscription(subscription),
+                            '**User**: ' + formatCustomer(customer),
                         ].join('\n'),
                     }
                 ],
@@ -82,9 +82,17 @@ function sendWebhook(server: Server, plan: string, subscription: ChargebeeSubscr
     })
 }
 
-function format(subscription: ChargebeeSubscription) {
+function formatSubscription(subscription: ChargebeeSubscription) {
     return '[' + subscription.id + ']' +
         '(https://' + process.env.CHARGEBEE_SITE + '.chargebee.com/subscriptions/' +  subscription.id + '/details)'
+}
+
+function formatCustomer(customer: ChargebeeCustomer) {
+    return customer.cf_discord_discriminator + ' (`' + customer.cf_discord_id_dont_know_disgdfindmyid + '`)'
+}
+
+function formatServer(server: Server) {
+    return '`' + server.id + '`'
 }
 
 export async function retriable(task: string, action: () => Promise<void> | void, retries: number = 1) {
