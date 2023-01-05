@@ -1,27 +1,12 @@
 <div align="center">
-    or gimbap, i was told.
+    or gimbap i was told.
 </div>
 
 ##
 
-Kimbap is an alternative module of Sugar for processing Chargebee subscriptions for Beemo. 
-
-#### 🥱 Lazy
-
-Unlike the original Sugar, this uses a lazy way of handling the subscriptions which is done by first taking the following 
-properties of the webhook (`{ id, event_type, subscription: { id } }`) before requesting the entire subscription using 
-the Chargebee API (to save time from validating and parsing).
-
-#### 📖 Cancel-culture
-
-Kimbap handles cancellations by first storing the cancellation in the database (`server, ends_at, subscription_id`) and scheduling the 
-cancellation internally before looking into the database to see if the cancellation is still valid and also looking 
-into Chargebee to ensure we aren't somehow cancelling an active subscription before sending it over to Kafka.
-
-#### 🍾 Social
-
-Kimbap is lazy. Kimbap simply directs most of the handling to its friend, in particularly Tea, using Kafka and for various 
-reasons (initialization, synchronization, etc.). All Kimbap does is talk to Chargebee, schedule stuff and talk to Tea.
+Kimbap is an alternative module of Sugar for processing Chargebee subscriptions for Beemo. It handles specifically the 
+webhook requests from Chargebee, collects the important information before sending off a Kafka message down for other 
+modules to handle the change.
 
 #### 📦 Setup
 
@@ -33,16 +18,7 @@ reasons (initialization, synchronization, etc.). All Kimbap does is talk to Char
 > instance, but ensure that the database itself is different. Prisma will ask you to reset the database 
 > if that happens, that's when you know it's the same table.
 
-In order to set-up Kimbap, we have to first migrate our database with Prisma using the following command:
-```shell
-# Yarn
-yarn run prisma migrate deploy
-
-# Node
-npx prisma migrate deploy
-```
-
-After doing so, you can now build the Docker image by running the following:
+In order to set up Kimbap, you first have to build the Docker image by running the following:
 ```shell
 docker build -t kimbap .
 ```

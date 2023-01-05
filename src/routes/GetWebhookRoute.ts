@@ -1,7 +1,6 @@
-import { ChargebeeEvent } from "../types/chargebee.js";
+import {ChargebeeEvent, ChargebeeSubscription} from "../types/chargebee.js";
 import { ValidationError } from "runtypes";
 import express from "express";
-import { chargebee } from "../connections/chargebee.js";
 import { Server } from "../types/server.js";
 import { SubscriptionCancelProcessor } from "../processors/SubscriptionCancelProcessor.js";
 import {SubscriptionActivateProcessor} from "../processors/SubscriptionActivateProcessor.js";
@@ -45,13 +44,7 @@ router.post('/webhook/', async (request, response) => {
         }
 
         processed_events.add(event.id)
-
-        const subscription = (await chargebee.subscription.retrieve(event.content.subscription.id).request()).subscription
-        if (subscription == null) {
-            console.error(`Failed to find the subscription (${event.content.subscription.id}).`)
-            response.sendStatus(500)
-            return
-        }
+        const subscription: ChargebeeSubscription = event.content.subscription
 
         // DEBATABLE: We should just tell Chargebee to go ahead and continue its day before we finish processing.
         // Because the retries on our side (e.g. when persisting cancellations to db or sending to kafka) takes more
@@ -60,8 +53,7 @@ router.post('/webhook/', async (request, response) => {
 
         const server: Server = { id: subscription.cf_discord_server_id }
         if (event.event_type === 'subscription_paused' || event.event_type === 'subscription_cancelled') {
-            // Webstorm won't stop nagging about the result for this Promise being ignored.
-            SubscriptionCancelProcessor.process(server, subscription).then(() => {})
+            SubscriptionCancelProcessor.process(server).then(() => {})
             return
         }
 
