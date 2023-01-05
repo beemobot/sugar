@@ -51,3 +51,12 @@ The following events needed to be selected (nothing more, nothing less) to have 
 - [x] Subscription Paused
 - [x] Subscription Cancelled
 - [x] Subscription Resumed
+
+### 🍩 Adding more plans
+
+In cases when more plans are to-be-added, we can support them by modifying the `configs/plans.json`. All the samples that you need 
+should be there, but to elaborate, you have to create a new object in the file with the following properties:
+- **name**: the name of the plan and also what should be sent to Kafka.
+- **ids**: the plans in Chargebee that would trigger this plan activation.
+
+Note that the `none` name is reserved for cancellations.
