@@ -1,6 +1,6 @@
 import express from "express";
 import expressBasicAuth from "express-basic-auth";
-import GetWebhookRoute from "../routes/GetWebhookRoute.js";
+import GetWebhookRoute from "../routes/PostWebhookRoute.js";
 import * as Sentry from '@sentry/node';
 import {Logger} from "@beemobot/common";
 import {TAG} from "../index.js";

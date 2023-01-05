@@ -2,9 +2,8 @@ import {ChargebeeCustomer, ChargebeeEvent, ChargebeeSubscription} from "../types
 import { ValidationError } from "runtypes";
 import express from "express";
 import { Server } from "../types/server.js";
-import { SubscriptionCancelProcessor } from "../processors/SubscriptionCancelProcessor.js";
-import {SubscriptionActivateProcessor} from "../processors/SubscriptionActivateProcessor.js";
 import * as Sentry from '@sentry/node';
+import {createTaskName, determinePlan, retriable, updatePlan} from "../utils/utils.js";
 
 const router = express.Router()
 
@@ -53,17 +52,8 @@ router.post('/webhook/', async (request, response) => {
         response.sendStatus(204)
 
         const server: Server = { id: subscription.cf_discord_server_id }
-        if (event.event_type === 'subscription_paused' || event.event_type === 'subscription_cancelled') {
-            SubscriptionCancelProcessor.process(server, subscription, customer).then(() => {})
-            return
-        }
-
-        if (subscription.status === 'active') {
-            SubscriptionActivateProcessor.process(server, subscription, customer).then(() => {})
-            return
-        }
-
-        response.status(400).json({ error: 'Unrecognized event.' })
+        retriable(createTaskName(subscription, customer),
+            async () => await updatePlan(server, determinePlan(subscription), subscription, customer))
     } catch (exception: any) {
         if (exception instanceof ValidationError) {
             response.status(400).json({ error: 'Invalid Request.' })
