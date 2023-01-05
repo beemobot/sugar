@@ -1,4 +1,4 @@
-import {ChargebeeEvent, ChargebeeSubscription} from "../types/chargebee.js";
+import {ChargebeeCustomer, ChargebeeEvent, ChargebeeSubscription} from "../types/chargebee.js";
 import { ValidationError } from "runtypes";
 import express from "express";
 import { Server } from "../types/server.js";
@@ -45,6 +45,7 @@ router.post('/webhook/', async (request, response) => {
 
         processed_events.add(event.id)
         const subscription: ChargebeeSubscription = event.content.subscription
+        const customer: ChargebeeCustomer = event.content.customer
 
         // DEBATABLE: We should just tell Chargebee to go ahead and continue its day before we finish processing.
         // Because the retries on our side (e.g. when persisting cancellations to db or sending to kafka) takes more
@@ -53,12 +54,12 @@ router.post('/webhook/', async (request, response) => {
 
         const server: Server = { id: subscription.cf_discord_server_id }
         if (event.event_type === 'subscription_paused' || event.event_type === 'subscription_cancelled') {
-            SubscriptionCancelProcessor.process(server).then(() => {})
+            SubscriptionCancelProcessor.process(server, subscription, customer).then(() => {})
             return
         }
 
         if (subscription.status === 'active') {
-            SubscriptionActivateProcessor.process(server, subscription).then(() => {})
+            SubscriptionActivateProcessor.process(server, subscription, customer).then(() => {})
             return
         }
 

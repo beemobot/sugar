@@ -4,6 +4,7 @@ import {Chargebee} from "./connections/chargebee.js";
 import {Koffaka} from "./connections/kafka.js";
 import {Expresso} from "./connections/express.js";
 import {Sentryboo} from "./connections/sentry.js";
+import {DiscordWebhook} from "./connections/discord.js";
 
 dotenv.config()
 
@@ -12,6 +13,7 @@ export const TAG = "Kimbap";
     try {
         Sentryboo.init()
         Chargebee.init()
+        DiscordWebhook.init()
         await Koffaka.init()
         Expresso.init()
     } catch (ex) {
