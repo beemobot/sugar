@@ -3,7 +3,8 @@ import { ValidationError } from "runtypes";
 import express from "express";
 import { Server } from "../types/server.js";
 import * as Sentry from '@sentry/node';
-import {createTaskName, determinePlan, retriable, updatePlan} from "../utils/utils.js";
+import {createTaskName, retriable} from "../utils/utils.js";
+import {determinePlan, updatePlan} from "../utils/plans.js";
 
 const router = express.Router()
 
