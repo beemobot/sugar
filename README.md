@@ -14,9 +14,9 @@ modules to handle the change.
 > This assumes that the `.env` is configured properly and contains all the properties 
 > that are needed. If not, please ensure that is done first.
 > 
-> Additionally, make sure that this does not use the same database as Tea or any existing project, it can be on the same 
-> instance, but ensure that the database itself is different. Prisma will ask you to reset the database 
-> if that happens, that's when you know it's the same table.
+
+
+
 
 In order to set up Kimbap, you first have to build the Docker image by running the following:
 ```shell
